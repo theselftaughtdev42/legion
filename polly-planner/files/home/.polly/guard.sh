@@ -22,7 +22,7 @@ check_path() {
     *) block "$path is outside the workspace." ;;
   esac
   case "$rel" in
-    GLOSSARY.md|GLOSSARY-MAP.md|*/GLOSSARY.md|docs/adr/*|*/docs/adr/*|docs/agents/*|CLAUDE.md|AGENTS.md) return 0 ;;
+    GLOSSARY.md|GLOSSARY-MAP.md|*/GLOSSARY.md|*/GLOSSARY-MAP.md|docs/adr/*|*/docs/adr/*|docs/agents/*|*/docs/agents/*|CLAUDE.md|*/CLAUDE.md|AGENTS.md|*/AGENTS.md) return 0 ;;
     *) block "Polly only edits domain docs (GLOSSARY*.md, docs/adr/, docs/agents/, CLAUDE.md, AGENTS.md); '$rel' is off limits. Capture code changes in the spec/tickets instead." ;;
   esac
 }
