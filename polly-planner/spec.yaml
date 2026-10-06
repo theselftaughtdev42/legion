@@ -18,9 +18,9 @@ permissions:
 
 setup:
   startup:
-    - command: ["sh", "-c", "mkdir -p /etc/claude-code && cp /home/agent/.polly/managed-settings.json /home/agent/.polly/CLAUDE.md /etc/claude-code/"]
+    - command: ["sh", "-c", "mkdir -p /etc/claude-code && cp /home/agent/.polly/managed-settings.json /home/agent/.polly/CLAUDE.md /home/agent/.polly/guard.sh /etc/claude-code/"]
       user: "0"
-      description: Install Polly's persona and edit/git guard as Claude managed memory and settings
+      description: Install Polly's persona, hook settings, and guard script as Claude managed memory and settings (root-owned, unwritable by the agent)
 
 agentInstructions:
   content: |

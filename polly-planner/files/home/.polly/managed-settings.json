@@ -4,7 +4,7 @@
       {
         "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash",
         "hooks": [
-          { "type": "command", "command": "bash /home/agent/.polly/guard.sh" }
+          { "type": "command", "command": "bash /etc/claude-code/guard.sh" }
         ]
       }
     ]
