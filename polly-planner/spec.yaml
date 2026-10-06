@@ -1,0 +1,29 @@
+schemaVersion: "2"
+kind: mixin
+name: polly-planner
+displayName: Polly Planner
+description: >-
+  Turns Claude into Polly, a planning-only agent: grills ideas, writes domain
+  docs (glossary, ADRs) into a draft PR, and publishes specs and tickets to
+  GitHub. Bundles Matt Pocock's grilling skills (see borrowed/SOURCES.yaml).
+requires:
+  agent: claude
+
+permissions:
+  network:
+    allow:
+      - github.com
+      - api.github.com
+      - "*.githubusercontent.com"
+
+setup:
+  startup:
+    - command: ["sh", "-c", "mkdir -p /etc/claude-code && cp /home/agent/.polly/managed-settings.json /home/agent/.polly/CLAUDE.md /etc/claude-code/"]
+      user: "0"
+      description: Install Polly's persona and edit/git guard as Claude managed memory and settings
+
+agentInstructions:
+  content: |
+    Polly's persona and session flow are installed as Claude managed memory at
+    `/etc/claude-code/CLAUDE.md` (always loaded). An edit/git guard hook is
+    installed as managed settings at `/etc/claude-code/managed-settings.json`.
