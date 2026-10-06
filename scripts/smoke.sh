@@ -23,7 +23,7 @@ guard() {  # guard <expected exit> <hook json>
   if [ "$rc" = "$1" ]; then echo "ok   guard exit $1: $2"; else echo "FAIL guard exit $rc (want $1): $2"; fails=$((fails+1)); fi
 }
 
-for s in $(awk '/^skills:/ {s=1; next} s && /^  [^ ]/ {sub(":", "", $1); print $1}' borrowed/SOURCES.yaml); do
+for s in $(awk -f scripts/sources.awk skills/borrowed/SOURCES.yaml | awk '$2 == "skill" {print $3}'); do
   check "skill $s present" "test -f ~/.claude/skills/$s/SKILL.md"
 done
 check "shared store hidden (no extra skills)" "[ \$(ls ~/.claude/skills | wc -l) -eq $(ls polly-planner/files/home/.claude/skills | wc -l) ]"

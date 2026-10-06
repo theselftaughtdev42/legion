@@ -1,6 +1,8 @@
 KIT        := polly-planner
 SKILLS_OUT := $(KIT)/files/home/.claude/skills
-SKILLS     := $(shell awk '/^skills:/ {s=1; next} s && /^  [^ ]/ {sub(":", "", $$1); print $$1}' borrowed/SOURCES.yaml)
+SOURCES    := skills/borrowed/SOURCES.yaml
+# <source>/<skill> for every borrowed skill, e.g. mattpocock/grilling
+SKILLS     := $(shell awk -f scripts/sources.awk $(SOURCES) | awk '$$2 == "skill" {print $$1 "/" $$3}')
 
 REPO ?=
 NAME  = polly-$(notdir $(abspath $(REPO)))
@@ -8,20 +10,20 @@ NAME  = polly-$(notdir $(abspath $(REPO)))
 .PHONY: help sync build secrets polly smoke clean
 
 help:
-	@echo "make sync [REF=<sha|branch>]  re-fetch borrowed skills at the pinned (or new) ref"
-	@echo "make build                   compile borrowed skills into the kit and validate it"
-	@echo "make secrets                 store a global GitHub secret backed by host 'gh auth token'"
-	@echo "make polly REPO=<path>       launch Polly on a clean checkout"
-	@echo "make smoke                   spin up a throwaway sandbox and check the kit"
-	@echo "make clean                   remove build output"
+	@echo "make sync SOURCE=<name> [REF=<sha|branch>]  re-fetch one borrowed source at its pinned (or new) ref"
+	@echo "make build                                  compile borrowed skills into the kit and validate it"
+	@echo "make secrets                                store a global GitHub secret backed by host 'gh auth token'"
+	@echo "make polly REPO=<path>                      launch Polly on a clean checkout"
+	@echo "make smoke                                  spin up a throwaway sandbox and check the kit"
+	@echo "make clean                                  remove build output"
 
 sync:
-	scripts/sync.sh $(REF)
+	scripts/sync.sh "$(SOURCE)" $(REF)
 
 build:
 	rm -rf $(SKILLS_OUT)
 	mkdir -p $(SKILLS_OUT)
-	$(foreach s,$(SKILLS),cp -R borrowed/$(s) $(SKILLS_OUT)/$(s);)
+	$(foreach s,$(SKILLS),cp -R skills/borrowed/$(s) $(SKILLS_OUT)/$(notdir $(s));)
 	sbx kit validate ./$(KIT)
 
 secrets:
