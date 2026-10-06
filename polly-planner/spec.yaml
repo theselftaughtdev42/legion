@@ -5,7 +5,7 @@ displayName: Polly Planner
 description: >-
   Turns Claude into Polly, a planning-only agent: grills ideas, writes domain
   docs (glossary, ADRs) into a draft PR, and publishes specs and tickets to
-  GitHub. Bundles Matt Pocock's grilling skills (see borrowed/SOURCES.yaml).
+  GitHub. Bundles Matt Pocock's grilling skills (see skills/borrowed/SOURCES.yaml).
 requires:
   agent: claude
 
