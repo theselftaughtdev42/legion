@@ -1,4 +1,5 @@
 KIT        := polly-planner
+KITS       := --kit ./$(KIT) --kit ./no-attribution
 SKILLS_OUT := $(KIT)/files/home/.claude/skills
 SOURCES    := skills/borrowed/SOURCES.yaml
 # <source>/<skill> for every borrowed skill, e.g. mattpocock/grilling
@@ -25,6 +26,7 @@ build:
 	mkdir -p $(SKILLS_OUT)
 	$(foreach s,$(SKILLS),cp -R skills/borrowed/$(s) $(SKILLS_OUT)/$(notdir $(s));)
 	sbx kit validate ./$(KIT)
+	sbx kit validate ./no-attribution
 
 secrets:
 	sbx secret set github --command "gh auth token"
@@ -36,7 +38,7 @@ polly: build
 	@if sbx ls | awk 'NR>1 {print $$1}' | grep -qx "$(NAME)"; then \
 		sbx run --name $(NAME); \
 	else \
-		sbx run --skills=off --name $(NAME) claude --kit ./$(KIT) "$(abspath $(REPO))"; \
+		sbx run --skills=off --name $(NAME) claude $(KITS) "$(abspath $(REPO))"; \
 	fi
 
 smoke: build
