@@ -10,7 +10,7 @@ git -C "$repo" init -q && git -C "$repo" commit -q --allow-empty -m init
 cleanup() { sbx rm -f "$name" >/dev/null 2>&1 || sbx rm "$name" >/dev/null 2>&1; rm -rf "$repo"; }
 trap cleanup EXIT
 
-sbx create --skills=off --name "$name" claude --kit ./polly-planner "$repo" >/dev/null || exit 1
+sbx create --skills=off --name "$name" claude --kit ./polly-planner --kit ./no-attribution "$repo" >/dev/null || exit 1
 sbx run -d --name "$name" >/dev/null 2>&1 || true   # make sure startup commands have run
 
 fails=0
@@ -29,6 +29,8 @@ done
 check "shared store hidden (no extra skills)" "[ \$(ls ~/.claude/skills | wc -l) -eq $(ls polly-planner/files/home/.claude/skills | wc -l) ]"
 check "managed settings installed" "jq -e '.hooks.PreToolUse' /etc/claude-code/managed-settings.json"
 check "Polly persona in managed memory" "grep -q 'You are \*\*Polly\*\*' /etc/claude-code/CLAUDE.md"
+check "attribution disabled" "jq -e '.attribution == {\"commit\": \"\", \"pr\": \"\"}' ~/.claude/settings.json"
+check "sbx claude settings preserved" "jq -e '.permissions.defaultMode' ~/.claude/settings.json"
 check "workspace is a writable bind mount" "test -w '$repo'"
 check "gh authenticated" "gh auth status"
 

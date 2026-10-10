@@ -1,0 +1,26 @@
+schemaVersion: "2"
+kind: mixin
+name: no-attribution
+displayName: No Attribution
+description: >-
+  Stops Claude signing commits and PRs ("Co-Authored-By: Claude",
+  "Generated with Claude Code") by merging an empty `attribution` into the
+  agent's user settings. Stackable with any other kit.
+requires:
+  agent: claude
+
+setup:
+  startup:
+    # Merge rather than overwrite: sbx's claude kit writes its own keys (permission mode etc.) to this file.
+    # Startup runs after every kit's setup.files, base agent first, so this lands last.
+    - command:
+        - sh
+        - -c
+        - |
+          set -e
+          f=/home/agent/.claude/settings.json
+          mkdir -p "$(dirname "$f")"
+          [ -s "$f" ] || echo '{}' > "$f"
+          jq '.attribution += {"commit": "", "pr": ""}' "$f" > "$f.tmp" || { rm -f "$f.tmp"; exit 1; }
+          mv "$f.tmp" "$f"
+      description: Disable Claude commit/PR attribution in user settings
