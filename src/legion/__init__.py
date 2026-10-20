@@ -6,6 +6,7 @@ async def main():
         "hello",
         image="python",
         memory=512,
+        replace=True,
     )
 
     output = await sb.exec("python", ["-c", "print('Hello from a microVM!')"])
